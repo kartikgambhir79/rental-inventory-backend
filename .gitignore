@@ -1,0 +1,72 @@
+# Node dependencies
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.envrc
+
+# Build output
+dist/
+build/
+out/
+coverage/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Cache
+.cache/
+.nyc_output/
+.tmp/
+temp/
+tmp/
+
+# TypeScript (if used)
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# PM2 / Nodemon
+pids/
+pids.log
+nodemon-debug.log
+
+# Lock files (optional)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Testing
+coverage/
+*.lcov
+
+# Optional: remove build artifacts for specific tools
+# .next/
+# .vercel/
+# .netlify/
+# firebase-debug.log
