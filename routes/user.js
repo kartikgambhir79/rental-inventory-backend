@@ -6,17 +6,17 @@ import {
     updateUser,
     deleteUser
 } from '../controllers/userController.js';
-import { protect, adminOnly } from '../middleware/authMiddleware.js';
+import auth, { adminOnly } from '../middleware/auth.js';
 
 const router = express.Router();
 
 router.route('/')
-    .get(protect, adminOnly, getUsers)
-    .post(protect, adminOnly, createUser);
+    .get(auth, adminOnly, getUsers)
+    .post(auth, adminOnly, createUser);
 
 router.route('/:id')
-    .get(protect, adminOnly, getUserById)
-    .put(protect, adminOnly, updateUser)
-    .delete(protect, adminOnly, deleteUser);
+    .get(auth, adminOnly, getUserById)
+    .put(auth, adminOnly, updateUser)
+    .delete(auth, adminOnly, deleteUser);
 
 export default router;

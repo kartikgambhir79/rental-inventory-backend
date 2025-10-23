@@ -6,7 +6,6 @@ import morgan from 'morgan';
 
 import authRoutes from './routes/auth.js';
 import itemsRoutes from './routes/items.js';
-import userRoutes from './routes/user.js';
 import rentalsRoutes from './routes/rentals.js';
 import settingsRoutes from './routes/settings.js';
 
@@ -18,7 +17,6 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/items', itemsRoutes);
-app.use('/api/customers', userRoutes);
 app.use('/api/rentals', rentalsRoutes);
 app.use('/api/settings', settingsRoutes);
 
