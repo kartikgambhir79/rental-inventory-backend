@@ -8,6 +8,8 @@ import authRoutes from './routes/auth.js';
 import itemsRoutes from './routes/items.js';
 import rentalsRoutes from './routes/rentals.js';
 import settingsRoutes from './routes/settings.js';
+import userRoutes from './routes/user.js';
+
 
 dotenv.config();
 const app = express();
@@ -19,6 +21,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/items', itemsRoutes);
 app.use('/api/rentals', rentalsRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/user', userRoutes);
+
+
 
 const PORT = process.env.PORT || 5000;
 const MONGO = process.env.MONGO_URI
