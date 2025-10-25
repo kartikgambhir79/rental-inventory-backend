@@ -5,12 +5,14 @@ import {
     getCustomerById,
     deleteCustomer,
 } from "../controllers/customerController.js";
+import { protect } from "../middleware/authMiddleware.js";
+
 
 const router = express.Router();
 
-router.post("/", createCustomer);
-router.get("/", getCustomers);
-router.get("/:id", getCustomerById);
-router.delete("/:id", deleteCustomer);
+router.post("/", protect, createCustomer);
+router.get("/", protect, getCustomers);
+router.get("/:id", protect, getCustomerById);
+router.delete("/:id", protect, deleteCustomer);
 
 export default router;
