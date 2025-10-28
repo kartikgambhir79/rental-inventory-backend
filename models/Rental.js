@@ -1,24 +1,39 @@
-import mongoose from "mongoose";
-
-const rentalSchema = new mongoose.Schema(
-  {
+import mongoose from 'mongoose';
+const schema = new mongoose.Schema({
     customerId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Customer",
-      required: true,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Customer',
+        required: true
     },
     itemId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Item",
-      required: true,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Item',
+        required: true
     },
-    rentDate: { type: Date, default: Date.now },
+    rentDate: {
+        type: Date,
+        default: Date.now
+    },
     returnDate: Date,
-    rentDays: Number,
-    totalAmount: Number,
-    status: { type: String, enum: ["Rented", "Returned"], default: "Rented" },
-  },
-  { timestamps: true }
-);
-
-export default mongoose.model("Rental", rentalSchema);
+    advancePayment: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    duePayment: {
+        type: Number,
+        default: 0
+    },
+    totalPayment: {
+        type: Number,
+        default: 0
+    },
+    status: {
+        type: String,
+        enum: ['rented', 'returned'],
+        default: 'rented'
+    }
+}, {
+    timestamps: true
+});
+export default mongoose.model('Rental', schema);

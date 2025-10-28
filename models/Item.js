@@ -6,8 +6,7 @@ const itemSchema = new mongoose.Schema(
     category: String,
     size: String,
     color: String,
-    pricePerDay: Number,
-
+    rent: Number,
     // Identification
     itemCode: { type: String, unique: true, required: true },
     barcodeImage: String,
@@ -17,6 +16,10 @@ const itemSchema = new mongoose.Schema(
     // Status
     available: { type: Boolean, default: true },
     status: { type: String, default: "Available" },
+    productImage: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );

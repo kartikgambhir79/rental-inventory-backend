@@ -5,6 +5,8 @@ import connectDB from "./config/db.js";
 import itemRoutes from "./routes/itemRoutes.js";
 import rentalRoutes from "./routes/rentalRoutes.js";
 import customerRoutes from "./routes/customerRoutes.js";
+import analyticsRoute from "./routes/analytics.js";
+
 import authRoutes from "./routes/authRoutes.js";
 import dotenv from 'dotenv';
 
@@ -22,6 +24,7 @@ app.use(bodyParser.json());
 app.use("/uploads", express.static("uploads"));
 
 app.use("/api/auth", authRoutes);
+app.use("/api/analytics", analyticsRoute);
 app.use("/api/items", itemRoutes);
 app.use("/api/rentals", rentalRoutes);
 app.use("/api/customers", customerRoutes);

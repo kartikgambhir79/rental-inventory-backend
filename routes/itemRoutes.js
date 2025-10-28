@@ -1,4 +1,5 @@
 import express from "express";
+import multer from "multer";
 import {
     createItem,
     getAllItems,
@@ -6,16 +7,24 @@ import {
     updateItem,
     deleteItem,
 } from "../controllers/itemController.js";
-import { adminOnly, protect } from "../middleware/authMiddleware.js";
-
-
 
 const router = express.Router();
 
-router.post("/", protect, createItem);
-router.get("/", protect, getAllItems);
-router.get("/code/:code", protect, getItemByCode);
-router.put("/:id", protect, updateItem);
-router.delete("/:id", protect, adminOnly, deleteItem);
+// Multer setup
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, "uploads/images"),
+    filename: (req, file, cb) => {
+        const unique = Date.now() + "-" + file.originalname;
+        cb(null, unique);
+    },
+});
+const upload = multer({ storage });
+
+// Routes
+router.post("/", upload.single("image"), createItem);
+router.get("/", getAllItems);
+router.get("/:code", getItemByCode);
+router.put("/:id", upload.single("image"), updateItem);
+router.delete("/:id", deleteItem);
 
 export default router;
