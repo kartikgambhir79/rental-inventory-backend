@@ -10,7 +10,6 @@ const itemSchema = new mongoose.Schema(
     // Identification
     itemCode: { type: String, unique: true, required: true },
     barcodeImage: String,
-    rfidTag: { type: String, unique: true, sparse: true },
     identifierType: { type: String, enum: ["BARCODE", "RFID", "MANUAL"], default: "BARCODE" },
 
     // Status

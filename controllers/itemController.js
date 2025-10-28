@@ -19,52 +19,49 @@ async function generateBarcode(itemCode) {
 
     const filePath = path.join(dir, `${itemCode}.png`);
     fs.writeFileSync(filePath, png);
-    return filePath;
+    return filePath.replace(/\\/g, "/");
 }
 
 // ---------- Create new item (with image upload) ----------
 export const createItem = async (req, res) => {
     try {
-        const {
-            name,
-            category,
-            size,
-            color,
-            rent,
-            rfidTag,
-            identifierType,
-        } = req.body;
+        const { name, category, size, color, rent, identifierType } = req.body;
 
-        // Handle image upload (from multer)
-        let imagePath = null;
-        if (req.file) {
-            const dir = "./uploads/images";
-            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-
-            imagePath = req.file.path.replace(/\\/g, "/"); // normalize path for all OS
+        if (!name || !category || !rent) {
+            return res.status(400).json({ success: false, message: "Name, category, and rent are required." });
         }
 
-        // Generate barcode
+        // ✅ Ensure directories exist
+        const imageDir = "./uploads/images";
+        const barcodeDir = "./uploads/barcodes";
+        [imageDir, barcodeDir].forEach((dir) => {
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        });
+
+        // ✅ Handle image upload (from multer)
+        let imagePath = null;
+        if (req.file) imagePath = req.file.path.replace(/\\/g, "/");
+
+        // ✅ Generate unique barcode
         const itemCode = `ITEM-${Date.now()}`;
         const barcodePath = await generateBarcode(itemCode);
 
-        // Save item to database
+        // ✅ Save item to DB
         const item = await Item.create({
             name,
             category,
             size,
             color,
             rent,
-            rfidTag: rfidTag || null,
             itemCode,
             barcodeImage: barcodePath,
-            productImage: imagePath, // 👈 store uploaded image path
+            productImage: imagePath,
             identifierType: identifierType || "BARCODE",
         });
 
         res.status(201).json({ success: true, item });
     } catch (error) {
-        console.error("Create Item Error:", error);
+        console.error("❌ Create Item Error:", error);
         res.status(500).json({ success: false, message: error.message });
     }
 };
@@ -73,9 +70,9 @@ export const createItem = async (req, res) => {
 export const getAllItems = async (req, res) => {
     try {
         const items = await Item.find().sort({ createdAt: -1 });
-        res.json(items);
+        res.json({ success: true, items });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ success: false, message: err.message });
     }
 };
 
@@ -84,12 +81,12 @@ export const getItemByCode = async (req, res) => {
     try {
         const { code } = req.params;
         const item = await Item.findOne({
-            $or: [{ itemCode: code }, { rfidTag: code }],
+            $or: [{ itemCode: code }],
         });
-        if (!item) return res.status(404).json({ message: "Item not found" });
-        res.json(item);
+        if (!item) return res.status(404).json({ success: false, message: "Item not found" });
+        res.json({ success: true, item });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ success: false, message: err.message });
     }
 };
 
@@ -97,27 +94,29 @@ export const getItemByCode = async (req, res) => {
 export const updateItem = async (req, res) => {
     try {
         const updateData = { ...req.body };
+        if (req.file) updateData.productImage = req.file.path.replace(/\\/g, "/");
 
-        // If new image is uploaded, replace the old one
-        if (req.file) {
-            updateData.productImage = req.file.path.replace(/\\/g, "/");
-        }
+        const item = await Item.findByIdAndUpdate(req.params.id, updateData, { new: true });
+        if (!item) return res.status(404).json({ success: false, message: "Item not found" });
 
-        const item = await Item.findByIdAndUpdate(req.params.id, updateData, {
-            new: true,
-        });
-        res.json(item);
+        res.json({ success: true, item });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ success: false, message: err.message });
     }
 };
 
 // ---------- Delete item ----------
 export const deleteItem = async (req, res) => {
     try {
-        await Item.findByIdAndDelete(req.params.id);
-        res.json({ message: "Item deleted" });
+        const item = await Item.findByIdAndDelete(req.params.id);
+        if (!item) return res.status(404).json({ success: false, message: "Item not found" });
+
+        // Optional: delete uploaded images
+        if (item.productImage && fs.existsSync(item.productImage)) fs.unlinkSync(item.productImage);
+        if (item.barcodeImage && fs.existsSync(item.barcodeImage)) fs.unlinkSync(item.barcodeImage);
+
+        res.json({ success: true, message: "Item deleted successfully" });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ success: false, message: err.message });
     }
 };

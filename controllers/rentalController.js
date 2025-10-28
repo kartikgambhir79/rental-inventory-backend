@@ -13,7 +13,7 @@ export const rentItem = async (req, res) => {
 
         // ✅ Find item
         const item = await Item.findOne({
-            $or: [{ itemCode }, { rfidTag: itemCode }],
+            $or: [{ itemCode }],
         });
         if (!item) return res.status(404).json({ message: "Item not found" });
         if (!item.available) return res.status(400).json({ message: "Item not available" });
